@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Energy Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #F5F4EF;
+  color: #0D1B2A;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── NAV ── */
+nav {
+  background: #0D1B2A;
+  display: flex;
+  align-items: stretch;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.nav-brand {
+  color: #fff;
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 1rem 0;
+  margin-right: 2.5rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nav-tabs { display: flex; }
+.nav-tab {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-bottom: 2.5px solid transparent;
+  transition: color 0.18s, border-color 0.18s;
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+.nav-tab:hover { color: rgba(255,255,255,0.8); }
+.nav-tab.active { color: #fff; border-bottom-color: #00B4A0; }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.22s ease both; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── HERO ── */
+.hero {
+  background: #0D1B2A;
+  padding: 3rem 2rem 2.5rem;
+}
+.hero-inner { max-width: 960px; margin: 0 auto; }
+.hero-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 0.4rem;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin-bottom: 0.3rem;
+}
+.hero-sub {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.85rem;
+  margin-bottom: 2.25rem;
+}
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.hm {
+  background: rgba(255,255,255,0.035);
+  padding: 1.25rem 1.5rem;
+  transition: background 0.15s;
+}
+.hm:hover { background: rgba(255,255,255,0.06); }
+.hm-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 0.5rem;
+}
+.hm-value {
+  font-family: 'Fraunces', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: #fff;
+}
+.hm-value.green  { color: #34D399; }
+.hm-value.amber  { color: #FCD34D; }
+.hm-sub {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  margin-top: 0.35rem;
+}
+
+/* ── LAYOUT ── */
+.content { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+.section { margin-bottom: 2.5rem; }
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #0D1B2A;
+  margin-bottom: 1rem;
+}
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(13,27,42,0.07);
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(13,27,42,0.05);
+}
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* ── BREAKDOWN ── */
+.bd-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
+}
+.grp-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  margin: 0.85rem 0 0.3rem;
+}
+.grp-block {
+  background: #F9FAFB;
+  border-radius: 8px;
+  padding: 0.55rem 0.8rem;
+}
+.bline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(13,27,42,0.05);
+}
+.bline:last-child { border-bottom: none; }
+.bl-label { color: #6B7280; }
+.bl-val { font-weight: 600; color: #0D1B2A; }
+.export-row {
+  background: #ECFDF5;
+  border-radius: 7px;
+  padding: 0.45rem 0.8rem;
+  margin: 0.65rem 0 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding-top: 0.7rem;
+  border-top: 1.5px solid rgba(13,27,42,0.1);
+  margin-top: 0.1rem;
+}
+.t-red   { color: #DC2626; }
+.t-green { color: #059669; }
+.t-muted { color: #9CA3AF; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; font-weight: 400; }
+
+/* ── CHART WRAP ── */
+.chart-wrap { position: relative; width: 100%; height: 260px; }
+
+/* ── INSIGHTS ── */
+.insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.insight-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(13,27,42,0.07);
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 1px 4px rgba(13,27,42,0.04);
+}
+.ins-icon { font-size: 1.4rem; margin-bottom: 0.6rem; }
+.ins-val {
+  font-family: 'Fraunces', serif;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #059669;
+  line-height: 1.1;
+}
+.ins-unit { font-size: 0.9rem; color: #6B7280; margin-left: 0.2rem; }
+.ins-desc { font-size: 0.8rem; color: #6B7280; margin-top: 0.35rem; line-height: 1.5; }
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.78rem;
+  color: #6B7280;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+.legend span { display: flex; align-items: center; gap: 5px; }
+.sw { width: 16px; height: 3px; display: inline-block; border-radius: 2px; }
+
+/* ── PAGE 2 ── */
+.oct-banner {
+  background: #16032E;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+.oct-logo-area { flex: 1; }
+.oct-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(167,139,250,0.6);
+  margin-bottom: 0.3rem;
+}
+.oct-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.25rem;
+}
+.oct-sub {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 1.25rem;
+}
+.oct-rates { display: flex; gap: 2.5rem; }
+.oct-rate {}
+.oct-rate-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(167,139,250,0.55);
+  margin-bottom: 0.2rem;
+}
+.oct-rate-val {
+  font-family: 'Fraunces', serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #C4B5FD;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.oct-rate-unit { font-size: 0.9rem; font-weight: 400; color: rgba(196,181,253,0.6); }
+.oct-rate-time {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.3);
+  margin-top: 0.2rem;
+}
+.oct-badge-area { flex-shrink: 0; text-align: right; }
+.oct-badge {
+  display: inline-block;
+  background: rgba(167,139,250,0.12);
+  border: 1px solid rgba(167,139,250,0.25);
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font-size: 0.75rem;
+  color: #C4B5FD;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.oct-badge-note {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.25);
+  margin-top: 0.5rem;
+}
+
+/* ── CONTROLS ── */
+.ctrl { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.85rem; }
+.ctrl-label { font-size: 0.875rem; color: #4B5563; min-width: 230px; flex-shrink: 0; }
+.ctrl-val { font-size: 0.875rem; font-weight: 600; min-width: 85px; text-align: right; flex-shrink: 0; color: #0D1B2A; }
+input[type=range] { flex: 1; height: 4px; accent-color: #009B8D; cursor: pointer; }
+.chk-row { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0.25rem 0 1.25rem; font-size: 0.85rem; color: #4B5563; line-height: 1.5; }
+.chk-row input { width: 15px; height: 15px; margin-top: 2px; flex-shrink: 0; accent-color: #009B8D; cursor: pointer; }
+
+/* ── STAT CARDS ── */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1.25rem 0; }
+.stat-card {
+  background: #F9FAFB;
+  border-radius: 10px;
+  border: 1px solid rgba(13,27,42,0.07);
+  padding: 0.85rem 1rem;
+}
+.sc-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  margin-bottom: 0.3rem;
+}
+.sc-val {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0D1B2A;
+}
+
+/* ── FOOTER NOTE ── */
+.foot-note {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(13,27,42,0.06);
+  display: flex;
+  gap: 0.5rem;
+  line-height: 1.6;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .hero-metrics { grid-template-columns: repeat(2, 1fr); }
+  .card-grid    { grid-template-columns: 1fr; }
+  .insights     { grid-template-columns: 1fr 1fr; }
+  .stat-grid    { grid-template-columns: repeat(2, 1fr); }
+  .oct-rates    { gap: 1.5rem; }
+  .oct-banner   { flex-direction: column; }
+  .hero         { padding: 2rem 1rem 1.5rem; }
+  .content      { padding: 1.25rem 1rem; }
+  .ctrl-label   { min-width: 160px; font-size: 0.8rem; }
+}
+@media (max-width: 480px) {
+  .insights     { grid-template-columns: 1fr; }
+  .oct-rates    { flex-direction: column; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════
+     NAV
+     ════════════════════════════════ -->
+<nav>
+  <div class="nav-brand">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M9 1L3 9h5l-1 6 6-8H8l1-6z" fill="#00B4A0" stroke="#00B4A0" stroke-width="0.5" stroke-linejoin="round"/>
+    </svg>
+    Energy Dashboard
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('p1', this)">Your summary</div>
+    <div class="nav-tab" onclick="showPage('p2', this)">EV payback calculator</div>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════════════
+     PAGE 1 — SUMMARY
+     ════════════════════════════════ -->
+<div id="p1" class="page active">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">2025 · Emsworth, Hampshire · Solar + 10kWh Battery + ASHP</div>
+      <h1 class="hero-title">Home Energy Dashboard</h1>
+      <p class="hero-sub">Octopus 12M Fixed import &nbsp;·&nbsp; Outgoing Octopus 12p/kWh export &nbsp;·&nbsp; Honda petrol car</p>
+
+      <div class="hero-metrics">
+        <div class="hm">
+          <div class="hm-label">Current annual spend</div>
+          <div class="hm-value">£2,576</div>
+          <div class="hm-sub">house + petrol, net of solar export</div>
+        </div>
+        <div class="hm">
+          <div class="hm-label">With EV + Intelligent Go</div>
+          <div class="hm-value green">£1,228</div>
+          <div class="hm-sub">house + EV charging, net of solar export</div>
+        </div>
+        <div class="hm">
+          <div class="hm-label">Annual saving</div>
+          <div class="hm-value green">£1,348</div>
+          <div class="hm-sub">tariff switch + fuel saving combined</div>
+        </div>
+        <div class="hm">
+          <div class="hm-label">Solar export income</div>
+          <div class="hm-value amber">£339</div>
+          <div class="hm-sub">2,826 kWh · Outgoing Octopus 12p</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- COST BREAKDOWN -->
+    <div class="section">
+      <h2 class="section-title">Annual cost breakdown</h2>
+      <div class="card-grid">
+
+        <div class="card">
+          <p class="bd-title">Today — Honda (petrol) + Fixed tariff</p>
+
+          <p class="grp-label">Day rate · 28.95p/kWh</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">Grid import · 2,382 kWh</span><span class="bl-val">£690</span></div>
+          </div>
+
+          <p class="grp-label">Night rate · 10p/kWh</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">Overnight use · 4,812 kWh</span><span class="bl-val">£481</span></div>
+          </div>
+
+          <p class="grp-label">Standing charge · 43.82p/day</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">365 days</span><span class="bl-val">£160</span></div>
+          </div>
+
+          <p class="grp-label">Petrol</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">10,000 mi @ 45 mpg @ 156.8p/L</span><span class="bl-val">£1,584</span></div>
+          </div>
+
+          <div class="export-row">
+            <span style="color:#059669">Solar export · 2,826 kWh @ 12p</span>
+            <span style="color:#059669;font-weight:600">−£339</span>
+          </div>
+          <div class="total-row">
+            <span>Net annual spend</span>
+            <span class="t-red">£2,576</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="bd-title">With EV + Intelligent Octopus Go</p>
+
+          <p class="grp-label">Day rate · 32.72p/kWh · 05:30–23:30</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">Grid import · 2,382 kWh</span><span class="bl-val">£779</span></div>
+          </div>
+
+          <p class="grp-label">Night rate · 8p/kWh · 23:30–05:30</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">Overnight household use · 4,812 kWh</span><span class="bl-val">£385</span></div>
+            <div class="bline"><span class="bl-label">EV charging · 2,857 kWh</span><span class="bl-val">£229</span></div>
+          </div>
+
+          <p class="grp-label">Standing charge · 47.71p/day</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">365 days</span><span class="bl-val">£174</span></div>
+          </div>
+
+          <p class="grp-label">Petrol</p>
+          <div class="grp-block">
+            <div class="bline"><span class="bl-label">Electric vehicle</span><span class="bl-val t-muted">£0</span></div>
+          </div>
+
+          <div class="export-row">
+            <span style="color:#059669">Solar export · 2,826 kWh @ 12p</span>
+            <span style="color:#059669;font-weight:600">−£339</span>
+          </div>
+          <div class="total-row">
+            <span>Net annual spend</span>
+            <span class="t-green">£1,228</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MONTHLY CHART -->
+    <div class="section">
+      <h2 class="section-title">Monthly energy flow · 2025</h2>
+      <div class="card">
+        <div class="legend">
+          <span><span class="sw" style="background:#185FA5"></span>Import cost</span>
+          <span><span class="sw" style="background:#1D9E75"></span>Export income</span>
+          <span><span style="display:inline-block;width:16px;height:2px;border-top:2px dashed #E24B4A"></span>Net cost</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="monthlyChart" role="img"
+            aria-label="Monthly electricity import and export for 2025. May, June and July are net-positive months where solar export exceeds import cost.">
+            Monthly data showing seasonal pattern: high imports in winter, near-zero in summer with significant solar exports.
+          </canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARIFF COMPARISON -->
+    <div class="section">
+      <h2 class="section-title">Your electricity cost vs other Octopus tariffs</h2>
+      <div class="card">
+        <p style="font-size:0.8rem;color:#6B7280;margin-bottom:0.9rem">Household electricity only, using your 2025 usage pattern — excludes petrol, solar export and EV charging.</p>
+        <div class="legend" style="margin-bottom:0.75rem">
+          <span><span class="sw" style="background:#0D1B2A"></span>Your current tariff</span>
+          <span><span class="sw" style="background:#1D9E75"></span>Cheaper</span>
+          <span><span class="sw" style="background:#F59E0B"></span>Near-equal cost</span>
+          <span><span class="sw" style="background:#D1D5DB"></span>More expensive</span>
+        </div>
+        <div class="chart-wrap" style="height:230px">
+          <canvas id="tariffChart" role="img"
+            aria-label="Horizontal bar chart comparing five Octopus tariffs by annual household electricity cost. 12M Fixed (current) costs £1,331. Agile is cheapest at about £1,112. Flexible Octopus is most expensive at £1,958.">
+            Costs per year: Flexible £1,958, Tracker £1,802, Intelligent Go £1,339, Fixed £1,331, Agile ~£1,112.
+          </canvas>
+        </div>
+        <p style="font-size:0.72rem;color:#9CA3AF;margin-top:0.65rem">* Agile Octopus is an estimate (avg ~8p overnight / ~24p daytime) — actual cost varies with wholesale prices. Intelligent Octopus Go requires a compatible EV charger; your Zappi qualifies.</p>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="section">
+      <h2 class="section-title">Key insights</h2>
+      <div class="insights">
+        <div class="insight-card">
+          <div class="ins-icon">☀️</div>
+          <div class="ins-val">3 months <span class="ins-unit" style="font-size:0.8rem"></span></div>
+          <div class="ins-desc">In May, June &amp; July your solar export income exceeded your electricity import bill — you were <strong>net energy-positive</strong> for a quarter of the year.</div>
+        </div>
+        <div class="insight-card">
+          <div class="ins-icon">🚗</div>
+          <div style="display:flex;align-items:baseline;gap:0.4rem;flex-wrap:wrap">
+            <div class="ins-val">2.3p</div>
+            <div style="font-size:0.8rem;color:#9CA3AF">vs 15.8p/mile (petrol)</div>
+          </div>
+          <div class="ins-desc">Cost per mile charging overnight on Intelligent Octopus Go at 8p/kWh. A <strong>7× difference</strong> in fuel cost — the single biggest saving available to you.</div>
+        </div>
+        <div class="insight-card">
+          <div class="ins-icon">🔋</div>
+          <div class="ins-val">~4,812 kWh</div>
+          <div class="ins-desc">Estimated overnight grid import in 2025. Your 10p night rate saved approximately <strong>£717/yr</strong> compared to paying a flat-rate tariff on the same usage.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /p1 -->
+
+
+<!-- ════════════════════════════════
+     PAGE 2 — CALCULATOR
+     ════════════════════════════════ -->
+<div id="p2" class="page">
+  <div class="content" style="padding-top:1.75rem">
+
+    <!-- OCTOPUS BANNER -->
+    <div class="oct-banner">
+      <div class="oct-logo-area">
+        <div class="oct-eyebrow">Your postcode tariff · Fixed 12 months</div>
+        <div class="oct-title">Intelligent Octopus Go</div>
+        <div class="oct-sub">Your Emsworth postcode · Smart overnight electricity — battery, ASHP and EV all charge in the cheap window</div>
+        <div class="oct-rates">
+          <div class="oct-rate">
+            <div class="oct-rate-label">Night rate</div>
+            <div class="oct-rate-val">8p <span class="oct-rate-unit">/kWh</span></div>
+            <div class="oct-rate-time">23:30 – 05:30 &nbsp;·&nbsp; 6 hours</div>
+          </div>
+          <div class="oct-rate">
+            <div class="oct-rate-label">Day rate</div>
+            <div class="oct-rate-val">32.72p <span class="oct-rate-unit">/kWh</span></div>
+            <div class="oct-rate-time">05:30 – 23:30 &nbsp;·&nbsp; 18 hours</div>
+          </div>
+          <div class="oct-rate">
+            <div class="oct-rate-label">Standing charge</div>
+            <div class="oct-rate-val">47.71p <span class="oct-rate-unit">/day</span></div>
+            <div class="oct-rate-time">All prices include VAT</div>
+          </div>
+        </div>
+      </div>
+      <div class="oct-badge-area">
+        <div class="oct-badge">Prices inc. VAT</div>
+        <div class="oct-badge-note">Confirmed for Emsworth postcode</div>
+      </div>
+    </div>
+
+    <!-- CALCULATOR CARD -->
+    <div class="card">
+      <h2 class="section-title">EV payback calculator</h2>
+      <p style="font-size:0.85rem;color:#6B7280;margin:-0.5rem 0 1.25rem">Adjust the sliders to model your personal break-even point. No charger cost included — your Zappi is already installed.</p>
+
+      <div class="ctrl">
+        <span class="ctrl-label">EV purchase price</span>
+        <input type="range" id="ev" min="3000" max="50000" step="1000" value="15000">
+        <span class="ctrl-val" id="ev-out">£15,000</span>
+      </div>
+      <div class="ctrl">
+        <span class="ctrl-label">Your Honda sale / trade-in value</span>
+        <input type="range" id="honda" min="500" max="10000" step="500" value="4000">
+        <span class="ctrl-val" id="honda-out">£4,000</span>
+      </div>
+      <div class="ctrl">
+        <span class="ctrl-label">Annual mileage</span>
+        <input type="range" id="mi" min="3000" max="25000" step="1000" value="10000">
+        <span class="ctrl-val" id="mi-out">10,000 mi</span>
+      </div>
+      <div class="chk-row">
+        <input type="checkbox" id="maint" checked>
+        <label for="maint">Include estimated ~£300/yr maintenance saving — EVs have no oil changes, and regenerative braking means brake pads last much longer.</label>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <p class="sc-label">Net upfront cost</p>
+          <p class="sc-val" id="s-up">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="sc-label">Annual saving</p>
+          <p class="sc-val" id="s-ann">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="sc-label">Break-even point</p>
+          <p class="sc-val" id="s-be">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="sc-label">10-year net saving</p>
+          <p class="sc-val" id="s-10">—</p>
+        </div>
+      </div>
+
+      <div class="legend" style="margin-top:0.25rem">
+        <span><span class="sw" style="background:#1D9E75"></span>Cumulative net saving</span>
+        <span><span style="display:inline-block;width:16px;height:2px;border-top:2px dashed #E24B4A"></span>Break-even</span>
+        <span><span style="display:inline-block;width:16px;height:2px;border-top:1.5px dashed #9CA3AF"></span>Zero line</span>
+      </div>
+
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="payChart" role="img"
+          aria-label="Cumulative EV saving chart over 15 years using Intelligent Octopus Go night rate of 8p/kWh. Adjust sliders to find your personal break-even point.">
+          Adjust the sliders above to calculate your EV payback period.
+        </canvas>
+      </div>
+
+      <div class="foot-note">
+        <span style="flex-shrink:0;font-size:0.85rem;color:#9CA3AF">ⓘ</span>
+        <span>Based on your actual Intelligent Octopus Go rates for Emsworth, Hampshire: 8p/kWh overnight (23:30–05:30), 32.72p/kWh daytime, 47.71p/day standing. Petrol at 156.8p/L (May 2026), 45 mpg, EV at 3.5 mi/kWh. No home charger cost included — you already have a Zappi. Household tariff change of −£8/yr vs current fixed tariff included. Insurance not modelled — check your insurer for EV rates.</span>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /p2 -->
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+
+// ── PAGE SWITCHING ──────────────────────────────────────
+var payInited = false;
+
+function showPage(id, tab) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+  if (id === 'p2' && !payInited) {
+    payInited = true;
+    setTimeout(initPayChart, 0);
+  }
+}
+
+
+// ── MONTHLY CHART (Page 1) ──────────────────────────────
+(function() {
+  var imp = [299.74,239.61,131.18,81.24,57.96,54.83,46.67,58.63,66.21,107.19,195.26,77.05];
+  var exp = [0.50,2,26,55,63,57,54,43,26,10,1.5,1];
+  var net = imp.map(function(v,i){ return +(v - exp[i]).toFixed(2); });
+  var labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  new Chart(document.getElementById('monthlyChart'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Import cost',
+          data: imp,
+          backgroundColor: '#185FA5',
+          borderRadius: 3,
+          order: 2
+        },
+        {
+          label: 'Export income',
+          data: exp,
+          backgroundColor: '#1D9E75',
+          borderRadius: 3,
+          order: 2
+        },
+        {
+          label: 'Net cost',
+          data: net,
+          type: 'line',
+          borderColor: '#E24B4A',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: '#E24B4A',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 1.5,
+          fill: false,
+          tension: 0.3,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(c) {
+              return c.dataset.label + ': £' + Math.abs(c.raw).toFixed(2);
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { autoSkip: false, font: { size: 11 } },
+          grid: { display: false }
+        },
+        y: {
+          ticks: {
+            callback: function(v) { return '£' + v; },
+            font: { size: 11 }
+          },
+          grid: { color: 'rgba(0,0,0,0.04)' }
+        }
+      }
+    }
+  });
+})();
+
+
+// ── TARIFF COMPARISON CHART (Page 1) ───────────────────
+(function() {
+  var CURR   = 1331;
+  var costs  = [1958, 1802, 1339, 1331, 1112];
+  var labels = ['Flexible Octopus', 'Octopus Tracker', 'Intelligent Octopus Go', '12M Fixed (current)', 'Agile Octopus *'];
+  var colors = costs.map(function(c, i) {
+    if (i === 3)        return '#0D1B2A';  // current
+    if (c < CURR - 20) return '#1D9E75';  // cheaper
+    if (c > CURR + 20) return '#D1D5DB';  // more expensive
+    return '#F59E0B';                      // near-equal
+  });
+
+  var refPlugin = {
+    id: 'tariffRef',
+    afterDraw: function(chart) {
+      var ctx  = chart.ctx;
+      var ca   = chart.chartArea;
+      var sx   = chart.scales.x;
+      var meta = chart.getDatasetMeta(0);
+      if (!ca || !meta.data.length) return;
+
+      ctx.save();
+
+      var xpx = sx.getPixelForValue(CURR);
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(13,27,42,0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(xpx, ca.top - 14);
+      ctx.lineTo(xpx, ca.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#6B7280';
+      ctx.font = '500 10px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('current', xpx, ca.top - 18);
+
+      meta.data.forEach(function(bar, i) {
+        var val  = costs[i];
+        var diff = val - CURR;
+        var diffStr = i === 3 ? '' : (diff > 0 ? '  +£' + diff.toLocaleString() : '  \u2212£' + Math.abs(diff).toLocaleString());
+        var barRight = sx.getPixelForValue(val);
+        ctx.fillStyle = i === 3 ? '#0D1B2A' : (diff < 0 ? '#059669' : '#6B7280');
+        ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('£' + val.toLocaleString() + diffStr, barRight + 8, bar.y + 4);
+      });
+
+      ctx.restore();
+    }
+  };
+
+  new Chart(document.getElementById('tariffChart'), {
+    type: 'bar',
+    plugins: [refPlugin],
+    data: {
+      labels: labels,
+      datasets: [{
+        data: costs,
+        backgroundColor: colors,
+        borderRadius: 4,
+        barThickness: 26
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      layout: { padding: { top: 28, right: 150 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(c) {
+              var diff = c.raw - CURR;
+              return '£' + c.raw.toLocaleString() + '/yr' +
+                (c.dataIndex === 3 ? ' (current)' : (diff > 0 ? ' (+£' + diff + ')' : ' (\u2212£' + Math.abs(diff) + ')'));
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 800,
+          max: 2200,
+          ticks: {
+            callback: function(v) { return '£' + v.toLocaleString(); },
+            font: { size: 10 },
+            maxTicksLimit: 8
+          },
+          grid: { color: 'rgba(0,0,0,0.04)' }
+        },
+        y: {
+          ticks: { font: { size: 11 }, color: '#4B5563' },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+})();
+
+
+// ── PAYBACK CHART (Page 2, lazy) ───────────────────────
+var payChart = null;
+var beVal = 5;
+
+var bePlugin = {
+  id: 'bePlugin',
+  afterDraw: function(chart) {
+    var ctx = chart.ctx;
+    var ca  = chart.chartArea;
+    var sy  = chart.scales.y;
+    var sx  = chart.scales.x;
+    if (!ca) return;
+
+    var y0 = sy.getPixelForValue(0);
+
+    ctx.save();
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'rgba(156,163,175,0.55)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ca.left, y0);
+    ctx.lineTo(ca.right, y0);
+    ctx.stroke();
+
+    if (isFinite(beVal) && beVal > 0 && beVal <= 15) {
+      var xpx = sx.getPixelForValue(beVal);
+      if (xpx >= ca.left && xpx <= ca.right) {
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = '#E24B4A';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(xpx, ca.top + 24);
+        ctx.lineTo(xpx, y0);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#B91C1C';
+        ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('break-even', xpx, ca.top + 15);
+      }
+    }
+    ctx.restore();
+  }
+};
+
+function money(n) {
+  return (n < 0 ? '-£' : '£') + Math.abs(Math.round(n)).toLocaleString();
+}
+
+function fmtBe(b) {
+  if (!isFinite(b) || b > 15) return '>15 yrs';
+  var y = Math.floor(b);
+  var m = Math.round((b - y) * 12);
+  if (m >= 12) { y++; m = 0; }
+  return m === 0 ? 'Year ' + y : 'Year ' + y + ' + ' + m + 'mo';
+}
+
+function updateCalc() {
+  var ev    = +document.getElementById('ev').value;
+  var honda = +document.getElementById('honda').value;
+  var mi    = +document.getElementById('mi').value;
+  var maint = document.getElementById('maint').checked;
+
+  document.getElementById('ev-out').textContent    = '£' + ev.toLocaleString();
+  document.getElementById('honda-out').textContent = '£' + honda.toLocaleString();
+  document.getElementById('mi-out').textContent    = mi.toLocaleString() + ' mi';
+
+  var annual  = Math.round(mi * 0.13554 + (-8) + (maint ? 300 : 0));
+  var upfront = Math.max(0, ev - honda);
+  beVal = annual > 0 ? upfront / annual : Infinity;
+
+  var pts = [];
+  for (var y = 0; y <= 15; y++) {
+    pts.push({ x: y, y: Math.round(-upfront + annual * y) });
+  }
+
+  document.getElementById('s-up').textContent  = money(upfront);
+  document.getElementById('s-ann').textContent = '£' + annual.toLocaleString();
+
+  var beEl = document.getElementById('s-be');
+  beEl.textContent  = fmtBe(beVal);
+  beEl.style.color  = beVal <= 15 ? '#059669' : '#D97706';
+
+  var yr10  = pts[10] ? pts[10].y : 0;
+  var el10  = document.getElementById('s-10');
+  el10.textContent = money(yr10);
+  el10.style.color = yr10 >= 0 ? '#059669' : '#DC2626';
+
+  if (payChart) {
+    payChart.data.datasets[0].data = pts;
+    payChart.update();
+  }
+}
+
+function initPayChart() {
+  payChart = new Chart(document.getElementById('payChart'), {
+    type: 'line',
+    plugins: [bePlugin],
+    data: {
+      datasets: [{
+        data: [],
+        borderColor: '#1D9E75',
+        backgroundColor: 'rgba(29,158,117,0.07)',
+        borderWidth: 2.5,
+        pointRadius: 3,
+        pointBackgroundColor: '#1D9E75',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 1.5,
+        fill: true,
+        tension: 0.15
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 250 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: function(c) { return c[0].parsed.x === 0 ? 'Today' : 'Year ' + c[0].parsed.x; },
+            label: function(c) { return money(c.parsed.y); }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          min: 0,
+          max: 15,
+          ticks: {
+            stepSize: 1,
+            font: { size: 11 },
+            callback: function(v) {
+              if (!Number.isInteger(v)) return null;
+              return v === 0 ? 'Now' : 'Yr ' + v;
+            }
+          },
+          grid: { display: false }
+        },
+        y: {
+          ticks: {
+            font: { size: 11 },
+            callback: function(v) {
+              return (v < 0 ? '-£' : '£') + Math.abs(Math.round(v / 1000)) + 'k';
+            }
+          },
+          grid: { color: 'rgba(0,0,0,0.04)' }
+        }
+      }
+    }
+  });
+
+  updateCalc();
+}
+
+['ev','honda','mi'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', updateCalc);
+});
+document.getElementById('maint').addEventListener('change', updateCalc);
+
+updateCalc();
+
+</script>
+</body>
+</html>
