@@ -16,6 +16,7 @@ body {
   color: #0D1B2A;
   font-size: 15px;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 /* ── NAV ── */
@@ -379,11 +380,24 @@ input[type=range] { flex: 1; height: 4px; accent-color: #009B8D; cursor: pointer
   .hero         { padding: 2rem 1rem 1.5rem; }
   .content      { padding: 1.25rem 1rem; }
   .ctrl-label   { min-width: 160px; font-size: 0.8rem; }
+  nav           { flex-wrap: wrap; padding: 0 1rem; }
+  .nav-brand    { width: 100%; margin-right: 0; padding: 0.65rem 0; font-size: 0.875rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .nav-tabs     { width: 100%; }
+  .nav-tab      { flex: 1; justify-content: center; text-align: center; font-size: 0.775rem; padding: 0 0.4rem; min-height: 40px; }
 }
 @media (max-width: 480px) {
   .insights     { grid-template-columns: 1fr; }
   .oct-rates    { flex-direction: column; gap: 1rem; }
 }
+/* RATES TABLE */
+.rates-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 1.25rem; }
+.rates-table th { text-align: left; font-size: 0.67rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #9CA3AF; padding: 0.35rem 0.75rem; border-bottom: 1.5px solid rgba(13,27,42,0.1); white-space: nowrap; }
+.rates-table td { padding: 0.42rem 0.75rem; border-bottom: 1px solid rgba(13,27,42,0.05); color: #374151; vertical-align: middle; }
+.rates-table tr:last-child td { border-bottom: none; }
+.rates-table .cur-row td { background: rgba(13,27,42,0.035); font-weight: 600; color: #0D1B2A; }
+.rates-table .cur-row td:first-child { box-shadow: inset 3px 0 0 #0D1B2A; }
+.rate-note { font-size: 0.67rem; color: #9CA3AF; display: block; margin-top: 1px; }
+.flat-badge { font-size: 0.67rem; color: #9CA3AF; font-style: italic; }
 </style>
 </head>
 <body>
@@ -540,6 +554,48 @@ input[type=range] { flex: 1; height: 4px; accent-color: #009B8D; cursor: pointer
     <div class="section">
       <h2 class="section-title">Your electricity cost vs other Octopus tariffs</h2>
       <div class="card">
+        <table class="rates-table">
+          <thead>
+            <tr>
+              <th>Tariff</th>
+              <th>Night / off-peak rate</th>
+              <th>Day / unit rate</th>
+              <th>Standing charge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flexible Octopus</td>
+              <td><span class="flat-badge">— flat rate</span></td>
+              <td>24.90p/kWh</td>
+              <td>45.78p/day</td>
+            </tr>
+            <tr>
+              <td>Octopus Tracker</td>
+              <td><span class="flat-badge">— flat rate</span></td>
+              <td>~22.89p/kWh<span class="rate-note">varies daily with wholesale</span></td>
+              <td>42.42p/day</td>
+            </tr>
+            <tr>
+              <td>Intelligent Octopus Go</td>
+              <td>8p/kWh<span class="rate-note">23:30 – 05:30</span></td>
+              <td>32.72p/kWh<span class="rate-note">05:30 – 23:30</span></td>
+              <td>47.71p/day</td>
+            </tr>
+            <tr class="cur-row">
+              <td>12M Fixed (current)</td>
+              <td>10p/kWh</td>
+              <td>28.95p/kWh</td>
+              <td>43.82p/day</td>
+            </tr>
+            <tr>
+              <td>Agile Octopus</td>
+              <td>~8p/kWh avg<span class="rate-note">overnight, half-hourly variable</span></td>
+              <td>~20p/kWh avg<span class="rate-note">daytime, half-hourly variable</span></td>
+              <td>~42p/day</td>
+            </tr>
+          </tbody>
+        </table>
         <p style="font-size:0.8rem;color:#6B7280;margin-bottom:0.9rem">Household electricity only, using your 2025 usage pattern — excludes petrol, solar export and EV charging.</p>
         <div class="legend" style="margin-bottom:0.75rem">
           <span><span class="sw" style="background:#0D1B2A"></span>Your current tariff</span>
